@@ -80,6 +80,8 @@ class CheckinResultScreen extends StatelessWidget {
         return _ResultConfig(Icons.cancel, Colors.red, 'Check-in closed', 'Closed at $closedAt');
       case 'no_active_event':
         return _ResultConfig(Icons.info_outline, Colors.grey, 'No active event', 'Nothing scheduled right now.');
+      case 'network_error':
+        return _ResultConfig(Icons.wifi_off, Colors.grey, 'No Internet Connection', result['message'] ?? 'Please check your connection and try again.');
       default:
         return _ResultConfig(Icons.error_outline, Colors.red, 'Something went wrong', result['message'] ?? '');
     }

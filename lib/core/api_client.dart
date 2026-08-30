@@ -13,7 +13,8 @@ class ApiClient {
     Map<String, dynamic> body, {
     bool auth = false,
   }) async {
-    final headers = {'Content-Type': 'application/json'};
+    try {
+      final headers = {'Content-Type': 'application/json'};
 
     if (auth) {
       final token = await SecureStorage.getAccessToken();
@@ -28,10 +29,15 @@ class ApiClient {
 
     if (response.body.isEmpty) return {'data': {}};
     return jsonDecode(response.body) as Map<String, dynamic>;
+  } catch (e) {
+    return {'error': true, 'code': 'network_error', 'message': 'No internet connection. Please check your connection and try again.'};
   }
+  
+  } 
 
   static Future<Map<String, dynamic>> fetch(String path, {bool auth = false}) async {
-    final headers = {'Content-Type': 'application/json'};
+    try {
+      final headers = {'Content-Type': 'application/json'};
     if (auth) {
       final token = await SecureStorage.getAccessToken();
       headers['Authorization'] = 'Bearer $token';
@@ -40,10 +46,14 @@ class ApiClient {
     
     if (response.body.isEmpty) return {'data': {}};
     return jsonDecode(response.body) as Map<String, dynamic>;
+  } catch (e) {
+    return {'error': true, 'code': 'network_error', 'message': 'No internet connection. Please check your connection and try again.'};
+  }
   }
 
   static Future<Map<String, dynamic>> patch(String path, Map<String, dynamic> body, {bool auth = false}) async {
-    final headers = {'Content-Type': 'application/json'};
+    try {
+      final headers = {'Content-Type': 'application/json'};
     if (auth) {
       final token = await SecureStorage.getAccessToken();
       headers['Authorization'] = 'Bearer $token';
@@ -52,10 +62,14 @@ class ApiClient {
     
     if (response.body.isEmpty) return {'data': {}};
     return jsonDecode(response.body) as Map<String, dynamic>;
+  } catch (e) {
+    return {'error': true, 'code': 'network_error', 'message': 'No internet connection. Please check your connection and try again.'};
+  }
   }
 
   static Future<Map<String, dynamic>> uploadFile(String path, String filePath, {bool auth = false}) async {
-  final headers = <String, String>{};
+  try {
+    final headers = <String, String>{};
   if (auth) {
     final token = await SecureStorage.getAccessToken();
     headers['Authorization'] = 'Bearer $token';
@@ -68,5 +82,8 @@ class ApiClient {
     final streamedResponse = await request.send();
     final responseBody = await streamedResponse.stream.bytesToString();
     return jsonDecode(responseBody) as Map<String, dynamic>;
+  } catch (e) {
+    return {'error': true, 'code': 'network_error', 'message': 'No internet connection. Please check your connection and try again.'};
+  }
   }
 }

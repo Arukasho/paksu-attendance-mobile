@@ -82,9 +82,9 @@ class _ScanScreenState extends State<ScanScreen> {
         auth: true,
       );
 
-      final data = result.containsKey('data')
-          ? result['data'] as Map<String, dynamic>
-          : result;
+      final data = result['code'] == 'network_error'
+        ? {'status': 'network_error', 'message': result['message']}
+        : (result.containsKey('data') ? result['data'] as Map<String, dynamic> : result);
 
       if (!mounted) return;
 
