@@ -207,20 +207,7 @@ class _EditProfileScreenState
                     const SizedBox(height: 16),
 
                   _buildSaveButton(),
-
-                  const SizedBox(height: 12),
-
-                  const Center(
-                    child: Text(
-                      'You can update this information later from your profile.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF94A3B8),
-                        fontSize: 11,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
+                  
                 ],
               ),
             ),

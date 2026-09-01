@@ -150,52 +150,26 @@ class _VerifyOtpScreenState
   Widget _buildBrandHeader() {
     return Column(
       children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color:
-                    Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+        // Brand icon
+        Align(
           alignment: Alignment.center,
-          child: const Text(
-            'P',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 21,
-              fontWeight: FontWeight.w700,
-            ),
+          child: Image.asset(
+            'assets/splash_icon.png',
+            width: 108,
+            height: 108,
+            fit: BoxFit.contain,
           ),
         ),
 
         const SizedBox(height: 14),
 
         const Text(
-          'Paksu Attendance',
+          'PAKSU Attendance App',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.4,
-          ),
-        ),
-
-        const SizedBox(height: 4),
-
-        const Text(
-          'Attendance Management System',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF64748B),
-            fontSize: 13,
           ),
         ),
       ],
@@ -453,7 +427,7 @@ class _VerifyOtpScreenState
 
   Widget _buildFooter() {
     return const Text(
-      'Paksu Attendance Management',
+      '©2026 PAKSU Attendance App. All rights reserved.',
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Color(0xFF94A3B8),

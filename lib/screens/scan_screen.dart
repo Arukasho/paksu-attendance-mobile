@@ -237,14 +237,12 @@ class _ScanScreenState extends State<ScanScreen> {
                       Colors.white.withOpacity(0.15),
                 ),
               ),
-              child: const Center(
-                child: Text(
-                  'P',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
+              child: Center(
+                child: Image.asset(
+                  'assets/splash_icon.png',
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

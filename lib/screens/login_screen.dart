@@ -141,59 +141,33 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildBrandHeader(ThemeData theme) {
-    return Column(
-      children: [
-        // Brand icon
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            'P',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 21,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+  return Column(
+    children: [
+      // Brand icon
+      Align(
+        alignment: Alignment.center,
+        child: Image.asset(
+          'assets/splash_icon.png',
+          width: 108,
+          height: 108,
+          fit: BoxFit.contain,
         ),
+      ),
 
-        const SizedBox(height: 14),
+      const SizedBox(height: 14),
 
-        const Text(
-          'Paksu Attendance',
-          style: TextStyle(
-            color: Color(0xFF0F172A),
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.4,
-          ),
+      const Text(
+        'PAKSU Attendance App',
+        style: TextStyle(
+          color: Color(0xFF0F172A),
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.4,
         ),
-
-        const SizedBox(height: 4),
-
-        const Text(
-          'Attendance Management System',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF64748B),
-            fontSize: 13,
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget _buildLoginCard(ThemeData theme) {
     return Container(
@@ -218,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Welcome back',
+              'Haloo!',
               style: TextStyle(
                 color: Color(0xFF0F172A),
                 fontSize: 19,
@@ -229,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 5),
 
             const Text(
-              'Sign in to continue to your account.',
+              'Silakan masuk ke akun kamu.',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 13,
@@ -293,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account? ",
+                    "Belum punya akun? ",
                     style: TextStyle(
                       color: Color(0xFF64748B),
                       fontSize: 13,
@@ -523,7 +497,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildFooter() {
     return const Text(
-      'Paksu Attendance Management',
+      '©2026 PAKSU Attendance App. All rights reserved.',
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Color(0xFF94A3B8),
