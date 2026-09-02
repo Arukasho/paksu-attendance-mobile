@@ -83,7 +83,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         const SizedBox(height: 28),
 
         const Text(
-          'Attendance History',
+          'Riwayat Kehadiran',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 17,
@@ -121,7 +121,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
         SizedBox(height: 5),
         Text(
-          'Lihat riwayat kehadiran event Anda.',
+          'Lihat riwayat kehadiran kamu di PAKSU.',
           style: TextStyle(
             color: Color(0xFF64748B),
             fontSize: 13,
@@ -174,7 +174,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Total Events Attended',
+                  'Total Kegiatan Dihadiri',
                   style: TextStyle(
                     color: Color(0xFF64748B),
                     fontSize: 12,
@@ -302,7 +302,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   BorderRadius.circular(20),
             ),
             child: const Text(
-              'Present',
+              'Hadir',
               style: TextStyle(
                 color: Color(0xFF15803D),
                 fontSize: 10,

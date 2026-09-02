@@ -284,8 +284,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 },
               ),
 
-            if (!kIsWeb) const SizedBox(width: 8),
-
+            if (!kIsWeb)
             _cameraButton(
               icon: Icons.flip_camera_ios_outlined,
               onPressed: () async {
