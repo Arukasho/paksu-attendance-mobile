@@ -49,10 +49,10 @@ class _ScanScreenState extends State<ScanScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            'Failed to load your profile.',
+            'Gagal memuat profil kamu.',
           ),
           action: SnackBarAction(
-            label: 'Retry',
+            label: 'Coba Lagi',
             onPressed: _load,
           ),
         ),
@@ -120,11 +120,11 @@ class _ScanScreenState extends State<ScanScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            'Check-in failed. Please try again.',
+            'Check-in gagal. Silakan coba lagi.',
           ),
           action: SnackBarAction(
-            label: 'OK',
-            onPressed: () {},
+            label: 'Coba Lagi',
+            onPressed: _load,
           ),
         ),
       );
@@ -255,7 +255,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Paksu Attendance',
+                    'PAKSU Attendance',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -377,8 +377,8 @@ class _ScanScreenState extends State<ScanScreen> {
             const SizedBox(height: 7),
 
             Text(
-              'Position the event QR code inside the frame '
-              'to check in.',
+              'Posisikan QR code di dalam frame '
+              'untuk check in.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.7),
@@ -400,7 +400,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 ),
                 const SizedBox(width: 7),
                 Text(
-                  'Scanning automatically',
+                  'Scanning secara otomatis',
                   style: TextStyle(
                     color:
                         Colors.white.withOpacity(0.7),
@@ -470,7 +470,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 const SizedBox(height: 5),
 
                 const Text(
-                  'Please wait while we verify your attendance.',
+                  'Silakan tunggu sementara kami memverifikasi kehadiran kamu.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF64748B),
@@ -514,7 +514,7 @@ class _ScanScreenState extends State<ScanScreen> {
             const SizedBox(height: 16),
 
             const Text(
-              'Camera unavailable',
+              'Kamera tidak tersedia',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -527,7 +527,7 @@ class _ScanScreenState extends State<ScanScreen> {
 
             Text(
               error.errorDetails?.message ??
-                  'Unable to access the camera.',
+                  'Tidak dapat mengakses kamera.',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFFCBD5E1),
@@ -546,7 +546,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 Icons.refresh,
                 size: 17,
               ),
-              label: const Text('Try Again'),
+              label: const Text('Coba Lagi'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: BorderSide(

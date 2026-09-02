@@ -179,7 +179,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Forgot your password?',
+              'Lupa password Anda?',
               style: TextStyle(
                 color: Color(0xFF0F172A),
                 fontSize: 19,
@@ -190,8 +190,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             const SizedBox(height: 6),
 
             const Text(
-              'Enter your email address and we\'ll send you '
-              'an OTP to reset your password.',
+              'Masukkan alamat email Anda di bawah ini, dan kami akan mengirimkan '
+              'OTP untuk mereset password Anda.',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 13,
@@ -248,7 +248,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Back to Sign In',
+                  'Kembali ke Sign In',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -264,7 +264,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   InputDecoration _inputDecoration() {
     return InputDecoration(
-      hintText: 'Enter your email address',
+      hintText: 'Masukkan alamat email Anda',
       hintStyle: const TextStyle(
         color: Color(0xFF94A3B8),
         fontSize: 13,

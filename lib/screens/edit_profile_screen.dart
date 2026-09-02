@@ -100,7 +100,7 @@ class _EditProfileScreenState
           _saving = false;
           _errorMessage =
               result['message'] ??
-                  'Failed to update your profile.';
+                  'Gagal memperbarui profil Anda.';
         });
       }
     } catch (e) {
@@ -109,7 +109,7 @@ class _EditProfileScreenState
       setState(() {
         _saving = false;
         _errorMessage =
-            'Unable to save your profile. Please try again.';
+            'Gagal menyimpan profil Anda. Silakan coba lagi.';
       });
     }
   }
@@ -167,7 +167,7 @@ class _EditProfileScreenState
           ),
         ),
         title: const Text(
-          'Complete Your Profile',
+          'Lengkapi Profil Kamu',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 18,
@@ -240,7 +240,7 @@ class _EditProfileScreenState
         const SizedBox(height: 16),
 
         const Text(
-          'Complete your profile',
+          'Lengkapi Profil Kamu',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 23,
@@ -252,8 +252,8 @@ class _EditProfileScreenState
         const SizedBox(height: 6),
 
         const Text(
-          'Add a few more details to complete your '
-          'attendance profile.',
+          'Tambahkan informasi pribadi kamu untuk melengkapi'
+          'profil absensi.',
           style: TextStyle(
             color: Color(0xFF64748B),
             fontSize: 13,
@@ -288,7 +288,7 @@ class _EditProfileScreenState
             CrossAxisAlignment.start,
         children: [
           const Text(
-            'Personal Information',
+            'Informasi Pribadi',
             style: TextStyle(
               color: Color(0xFF0F172A),
               fontSize: 15,
@@ -299,7 +299,7 @@ class _EditProfileScreenState
           const SizedBox(height: 4),
 
           const Text(
-            'Please provide accurate information.',
+            'Silakan berikan informasi yang akurat.',
             style: TextStyle(
               color: Color(0xFF94A3B8),
               fontSize: 11,
@@ -311,7 +311,7 @@ class _EditProfileScreenState
           _buildTextField(
             controller: _universityController,
             label: 'Universitas',
-            hint: 'Enter your university',
+            hint: 'Masukkan asal universitas Anda',
             icon: Icons.school_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -322,7 +322,7 @@ class _EditProfileScreenState
           _buildTextField(
             controller: _stambukController,
             label: 'Stambuk',
-            hint: 'Enter your student ID',
+            hint: 'Masukkan stambuk Anda',
             icon: Icons.badge_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -333,7 +333,7 @@ class _EditProfileScreenState
           _buildTextField(
             controller: _addressController,
             label: 'Alamat Domisili',
-            hint: 'Enter your domicile address',
+            hint: 'Masukkan alamat domisili Anda',
             icon: Icons.location_on_outlined,
             maxLines: 3,
             textInputAction:
@@ -345,7 +345,7 @@ class _EditProfileScreenState
           _buildTextField(
             controller: _birthPlaceController,
             label: 'Tempat Lahir',
-            hint: 'Enter your place of birth',
+            hint: 'Masukkan tempat lahir Anda',
             icon: Icons.location_city_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -473,7 +473,7 @@ class _EditProfileScreenState
             fontSize: 13,
           ),
           decoration: InputDecoration(
-            hintText: 'Select your birth date',
+            hintText: 'Pilih tanggal lahir Anda',
             hintStyle: const TextStyle(
               color: Color(0xFF94A3B8),
               fontSize: 13,

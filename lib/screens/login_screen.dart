@@ -242,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: const Text(
-                  'Forgot Password?',
+                  'Lupa Password?',
                   style: TextStyle(
                     color: Color(0xFF2563EB),
                     fontSize: 13,
@@ -298,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Username, Email or Phone',
+          'Username, Email atau Nomor Telepon',
           style: TextStyle(
             color: Color(0xFF334155),
             fontSize: 13,
@@ -312,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textInputAction: TextInputAction.next,
           enabled: !_loading,
           decoration: _inputDecoration(
-            hintText: 'Enter your username, email or phone',
+            hintText: 'Masukkan username, email atau nomor telepon kamu',
             prefixIcon: Icons.person_outline,
           ),
         ),
@@ -344,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           },
           decoration: _inputDecoration(
-            hintText: 'Enter your password',
+            hintText: 'Masukkan password kamu',
             prefixIcon: Icons.lock_outline,
             suffixIcon: IconButton(
               onPressed: () {

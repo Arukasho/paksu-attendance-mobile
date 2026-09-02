@@ -51,7 +51,7 @@ class CheckinResultScreen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   const Text(
-                    'Paksu Attendance Management',
+                    'Paksu Attendance App',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFF94A3B8),
@@ -212,7 +212,7 @@ class CheckinResultScreen extends StatelessWidget {
 
                 Text(
                   eventName.isEmpty
-                      ? 'Unknown event'
+                      ? 'Event tidak dikenal'
                       : eventName,
                   style: const TextStyle(
                     color: Color(0xFF0F172A),
@@ -320,9 +320,9 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFF16A34A),
           backgroundColor:
               const Color(0xFFF0FDF4),
-          title: 'Attendance Successful!',
+          title: 'Absen berhasil!',
           subtitle:
-              'You have been successfully checked in.',
+              'Kamu sudah berhasil check in.',
         );
 
       case 'already_checked_in':
@@ -331,9 +331,9 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFF2563EB),
           backgroundColor:
               const Color(0xFFEFF6FF),
-          title: "You're Already Checked In",
+          title: "Kamu Sudah Check In",
           subtitle:
-              'You have already checked in for this event.',
+              'Kamu sudah check in untuk event ini.',
         );
 
       case 'too_early':
@@ -347,11 +347,11 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFFD97706),
           backgroundColor:
               const Color(0xFFFFFBEB),
-          title: 'Check-in Not Open Yet',
+          title: 'Check-in Belum Dibuka',
           subtitle:
-              'Please wait until attendance opens.',
+              'Silakan tunggu hingga absensi dibuka.',
           detail: opensAt.isNotEmpty
-              ? 'Check-in opens at $opensAt.'
+              ? 'Check-in dibuka pada $opensAt.'
               : null,
         );
 
@@ -366,11 +366,11 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFFDC2626),
           backgroundColor:
               const Color(0xFFFEF2F2),
-          title: 'Check-in Closed',
+          title: 'Check-in sudah ditutup.',
           subtitle:
-              'The attendance period for this event has ended.',
+              'Periode absensi untuk event ini telah berakhir.',
           detail: closedAt.isNotEmpty
-              ? 'Check-in closed at $closedAt.'
+              ? 'Check-in ditutup pada $closedAt.'
               : null,
         );
 
@@ -380,9 +380,9 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFF64748B),
           backgroundColor:
               const Color(0xFFF1F5F9),
-          title: 'No Active Event',
+          title: 'Tidak ada event aktif',
           subtitle:
-              'There is no event available for check-in right now.',
+              'Tidak ada event yang tersedia untuk check-in saat ini.',
         );
 
       case 'network_error':
@@ -391,11 +391,11 @@ class CheckinResultScreen extends StatelessWidget {
           color: const Color(0xFF64748B),
           backgroundColor:
               const Color(0xFFF1F5F9),
-          title: 'No Internet Connection',
+          title: 'Tidak ada koneksi internet',
           subtitle:
-              'We could not connect to the server.',
+              'Kami tidak dapat terhubung ke server.',
           detail: result['message'] ??
-              'Please check your connection and try again.',
+              'Silakan periksa koneksi Anda dan coba lagi.',
         );
 
       default:
@@ -406,9 +406,9 @@ class CheckinResultScreen extends StatelessWidget {
               const Color(0xFFFEF2F2),
           title: 'Something Went Wrong',
           subtitle:
-              'We could not complete your check-in.',
+              'Kami tidak dapat menyelesaikan check-in Anda.',
           detail: result['message'] ??
-              'Please try scanning the QR code again.',
+              'Silakan coba pindai kode QR lagi.',
         );
     }
   }

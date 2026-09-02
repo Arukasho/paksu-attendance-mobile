@@ -41,7 +41,7 @@ class _VerifyOtpScreenState
     if (otp.isEmpty) {
       setState(() {
         _errorMessage =
-            'Please enter the verification code.';
+            'Silakan masukkan kode verifikasi.';
       });
       return;
     }
@@ -49,7 +49,7 @@ class _VerifyOtpScreenState
     if (otp.length != 6) {
       setState(() {
         _errorMessage =
-            'Please enter the 6-digit verification code.';
+            'Silakan masukkan kode verifikasi 6-digit.';
       });
       return;
     }
@@ -89,7 +89,7 @@ class _VerifyOtpScreenState
           _loading = false;
           _errorMessage =
               result['message'] ??
-                  'Invalid verification code.';
+                  'Kode verifikasi tidak valid.';
         });
       }
     } catch (e) {
@@ -98,8 +98,8 @@ class _VerifyOtpScreenState
       setState(() {
         _loading = false;
         _errorMessage =
-            'Unable to verify the code. '
-            'Please try again.';
+            'Gagal memverifikasi kode. '
+            'Silakan coba lagi.';
       });
     }
   }
@@ -216,8 +216,8 @@ class _VerifyOtpScreenState
             const SizedBox(height: 7),
 
             const Text(
-              'Enter the 6-digit verification code '
-              'we sent to:',
+              'Masukkan kode verifikasi 6-digit '
+              'yang kami kirimkan ke:',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 13,
@@ -239,7 +239,7 @@ class _VerifyOtpScreenState
             const SizedBox(height: 24),
 
             const Text(
-              'Verification Code',
+              'Kode Verifikasi',
               style: TextStyle(
                 color: Color(0xFF334155),
                 fontSize: 13,

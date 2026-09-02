@@ -121,7 +121,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
         SizedBox(height: 5),
         Text(
-          'View your event attendance history.',
+          'Lihat riwayat kehadiran event Anda.',
           style: TextStyle(
             color: Color(0xFF64748B),
             fontSize: 13,
@@ -350,7 +350,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           const SizedBox(height: 20),
 
           const Text(
-            'No Attendance History',
+            'Tidak ada riwayat kehadiran',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF0F172A),
@@ -362,7 +362,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           const SizedBox(height: 7),
 
           const Text(
-            'Your completed event check-ins will appear here.',
+            'Riwayat check-in event Anda yang berhasil akan muncul di sini.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF64748B),

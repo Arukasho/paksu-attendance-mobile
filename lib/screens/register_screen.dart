@@ -266,7 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 4),
 
         const Text(
-          'Create your attendance account',
+          'Silakan buat aku baru kamu.',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Color(0xFF64748B),
@@ -300,7 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Create account',
+              'Buat Akun',
               style: TextStyle(
                 color: Color(0xFF0F172A),
                 fontSize: 19,
@@ -311,7 +311,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 5),
 
             const Text(
-              'Fill in your details to get started.',
+              'Isi detail kamu untuk memulai.',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 13,
@@ -322,7 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildTextField(
               label: 'Full Name',
-              hint: 'Enter your full name',
+              hint: 'Masukkan nama lengkap kamu',
               controller: _fullNameController,
               icon: Icons.person_outline,
               textInputAction: TextInputAction.next,
@@ -332,7 +332,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildTextField(
               label: 'Username',
-              hint: 'Choose a username',
+              hint: 'Masukkan username',
               controller: _usernameController,
               icon: Icons.alternate_email,
               textInputAction: TextInputAction.next,
@@ -342,7 +342,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildTextField(
               label: 'Phone Number',
-              hint: 'Enter your phone number',
+              hint: 'Masukkan nomor telepon kamu',
               controller: _phoneController,
               icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
@@ -353,7 +353,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildTextField(
               label: 'Email',
-              hint: 'Enter your email address',
+              hint: 'Masukkan alamat email kamu',
               controller: _emailController,
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
@@ -364,7 +364,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildPasswordField(
               label: 'Password',
-              hint: 'Create a password',
+              hint: 'Buat password',
               controller: _passwordController,
               obscureText: _obscurePassword,
               onToggle: () {
@@ -378,7 +378,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             _buildPasswordField(
               label: 'Confirm Password',
-              hint: 'Re-enter your password',
+              hint: 'Konfirmasi password',
               controller: _confirmPasswordController,
               obscureText: _obscureConfirmPassword,
               onToggle: () {
@@ -423,7 +423,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   const Text(
-                    'Already have an account? ',
+                    'Sudah punya akun? ',
                     style: TextStyle(
                       color: Color(0xFF64748B),
                       fontSize: 13,
@@ -598,7 +598,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Clear the consent error once the user agrees.
                       if (_agreedToPrivacy &&
                           _errorMessage ==
-                              'You must agree to the Privacy Policy to continue.') {
+                              'Kamu harus setuju dengan Kebijakan Privasi untuk melanjutkan.') {
                         _errorMessage = null;
                       }
                     });
@@ -619,10 +619,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: 'I agree to the ',
+                    text: 'Saya setuju dengan ',
                   ),
                   TextSpan(
-                    text: 'Privacy Policy',
+                    text: 'Kebijakan Privasi',
                     style: TextStyle(
                       color: Color(0xFF2563EB),
                       decoration: TextDecoration.underline,
@@ -705,7 +705,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               )
             : const Text(
-                'Create Account',
+                'Buat Akun',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -717,7 +717,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildFooter() {
     return const Text(
-      '@2026 PAKSU Attendance App. All rights reserved.',
+      '©2026 PAKSU Attendance App. All rights reserved.',
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Color(0xFF94A3B8),

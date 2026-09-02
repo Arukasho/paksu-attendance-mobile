@@ -49,7 +49,7 @@ class _ResetPasswordScreenState
 
     if (newPassword.isEmpty) {
       setState(() {
-        _errorMessage = 'Please enter a new password.';
+        _errorMessage = 'Silakan masukkan password baru.';
       });
       return;
     }
@@ -57,7 +57,7 @@ class _ResetPasswordScreenState
     if (newPassword.length < 8) {
       setState(() {
         _errorMessage =
-            'Password must be at least 8 characters.';
+            'Password harus memiliki setidaknya 8 karakter.';
       });
       return;
     }
@@ -65,7 +65,7 @@ class _ResetPasswordScreenState
     if (confirmPassword.isEmpty) {
       setState(() {
         _errorMessage =
-            'Please confirm your new password.';
+            'Silakan konfirmasi password baru kamu.';
       });
       return;
     }
@@ -73,7 +73,7 @@ class _ResetPasswordScreenState
     if (newPassword != confirmPassword) {
       setState(() {
         _errorMessage =
-            'Passwords do not match.';
+            'Password tidak cocok.';
       });
       return;
     }
@@ -114,7 +114,7 @@ class _ResetPasswordScreenState
           _loading = false;
           _errorMessage =
               result['message'] ??
-                  'Unable to reset your password.';
+                  'Tidak dapat mereset password kamu.';
         });
       }
     } catch (e) {
@@ -123,8 +123,8 @@ class _ResetPasswordScreenState
       setState(() {
         _loading = false;
         _errorMessage =
-            'Unable to reset your password. '
-            'Please try again.';
+            'Tidak dapat mereset password kamu. '
+            'Silakan coba lagi.';
       });
     }
   }
@@ -139,15 +139,15 @@ class _ResetPasswordScreenState
             borderRadius: BorderRadius.circular(16),
           ),
           title: const Text(
-            'Password Reset Successful',
+            'Reset Password Berhasil',
             style: TextStyle(
               color: Color(0xFF0F172A),
               fontWeight: FontWeight.w700,
             ),
           ),
           content: const Text(
-            'Your password has been changed successfully. '
-            'You can now log in with your new password.',
+            'Password kamu telah diubah dengan sukses. '
+            'Kamu sekarang dapat masuk dengan password baru kamu.',
             style: TextStyle(
               color: Color(0xFF64748B),
               fontSize: 14,
@@ -164,7 +164,7 @@ class _ResetPasswordScreenState
                     const Color(0xFF2563EB),
               ),
               child: const Text(
-                'Continue to Login',
+                'Lanjutkan ke Login',
               ),
             ),
           ],
@@ -269,7 +269,7 @@ class _ResetPasswordScreenState
               CrossAxisAlignment.start,
           children: [
             const Text(
-              'Create a new password',
+              'Buat password baru',
               style: TextStyle(
                 color: Color(0xFF0F172A),
                 fontSize: 19,
@@ -280,8 +280,8 @@ class _ResetPasswordScreenState
             const SizedBox(height: 6),
 
             const Text(
-              'Choose a strong password that you '
-              'haven\'t used before.',
+              'Pilih password baru yang aman dan'
+              'belum pernah digunakan sebelumnya.',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 13,
@@ -292,7 +292,7 @@ class _ResetPasswordScreenState
             const SizedBox(height: 24),
 
             const Text(
-              'New Password',
+              'Password Baru',
               style: TextStyle(
                 color: Color(0xFF334155),
                 fontSize: 13,
@@ -309,7 +309,7 @@ class _ResetPasswordScreenState
               textInputAction:
                   TextInputAction.next,
               decoration: _passwordDecoration(
-                hint: 'Enter your new password',
+                hint: 'Masukkan password baru kamu',
                 obscure: _obscureNewPassword,
                 onToggle: () {
                   setState(() {
@@ -323,7 +323,7 @@ class _ResetPasswordScreenState
             const SizedBox(height: 7),
 
             const Text(
-              'Use at least 8 characters.',
+              'Gunakan setidaknya 8 karakter.',
               style: TextStyle(
                 color: Color(0xFF94A3B8),
                 fontSize: 11,
@@ -333,7 +333,7 @@ class _ResetPasswordScreenState
             const SizedBox(height: 18),
 
             const Text(
-              'Confirm Password',
+              'Konfirmasi Password',
               style: TextStyle(
                 color: Color(0xFF334155),
                 fontSize: 13,
@@ -357,7 +357,7 @@ class _ResetPasswordScreenState
                 }
               },
               decoration: _passwordDecoration(
-                hint: 'Confirm your new password',
+                hint: 'Konfirmasi password baru kamu',
                 obscure:
                     _obscureConfirmPassword,
                 onToggle: () {

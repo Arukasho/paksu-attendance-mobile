@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Unable to update profile photo. Please try again.',
+            'Tidak dapat memperbarui foto profil kamu. Silakan coba lagi.',
           ),
         ),
       );
@@ -214,21 +214,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (_) {
         return AlertDialog(
           title: const Text(
-            'Log out from all devices?',
+            'Log out dari semua perangkat?',
             style: TextStyle(
               fontWeight: FontWeight.w700,
             ),
           ),
           content: const Text(
-            'This will sign you out from every device where '
-            'your account is currently logged in.',
+            'Ini akan menandai Anda keluar dari setiap perangkat di mana '
+            'akun kamu saat ini masuk.',
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('Cancel'),
+              child: const Text('Batal'),
             ),
             TextButton(
               onPressed: () {
@@ -476,8 +476,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           Text(
             percentage >= 100
-                ? 'Your profile is complete.'
-                : 'Complete your profile to provide more information.',
+                ? 'Profil kamu sudah lengkap.'
+                : 'Lengkapi profil kamu untuk memberikan lebih banyak informasi.',
             style: const TextStyle(
               color: Color(0xFF64748B),
               fontSize: 12,
@@ -522,7 +522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _actionTile(
           icon: Icons.edit_outlined,
           title: 'Complete / Edit Profile',
-          subtitle: 'Update your personal information',
+          subtitle: 'Perbarui informasi akun kamu',
           onTap: _loggingOut ? null : _editProfile,
         ),
       ],
@@ -536,8 +536,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         _actionTile(
           icon: Icons.privacy_tip_outlined,
-          title: 'Privacy Policy',
-          subtitle: 'Learn how your personal data is handled',
+          title: 'Kebijakan Privasi',
+          subtitle: 'Pelajari bagaimana data pribadi kamu ditangani',
           onTap: _loggingOut ? null : _openPrivacyPolicy,
         ),
       ],
@@ -570,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _logoutTile(
                 icon: Icons.logout,
                 title: 'Logout',
-                subtitle: 'Sign out from this device',
+                subtitle: 'Keluar dari perangkat ini',
                 onTap: _loggingOut ? null : _logout,
               ),
 
@@ -583,7 +583,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _logoutTile(
                 icon: Icons.logout_outlined,
                 title: 'Logout from All Devices',
-                subtitle: 'Sign out everywhere',
+                subtitle: 'Keluar dari semua perangkat',
                 destructive: true,
                 onTap:
                     _loggingOut ? null : _logoutAllDevices,
@@ -873,7 +873,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 12),
             const Text(
-              'Failed to load profile.',
+              'Gagal memuat profil.',
               style: TextStyle(
                 color: Color(0xFF334155),
                 fontSize: 14,
@@ -883,7 +883,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 12),
             TextButton(
               onPressed: _load,
-              child: const Text('Try Again'),
+              child: const Text('Coba Lagi'),
             ),
           ],
         ),
