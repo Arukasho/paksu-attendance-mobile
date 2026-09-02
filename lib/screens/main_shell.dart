@@ -113,7 +113,7 @@ class _MainShellState extends State<MainShell> {
           selectedIcon: Icon(
             Icons.history,
           ),
-          label: 'History',
+          label: 'Riwayat',
         ),
         NavigationDestination(
           icon: Icon(
@@ -122,7 +122,7 @@ class _MainShellState extends State<MainShell> {
           selectedIcon: Icon(
             Icons.person,
           ),
-          label: 'Profile',
+          label: 'Profil',
         ),
       ],
     );

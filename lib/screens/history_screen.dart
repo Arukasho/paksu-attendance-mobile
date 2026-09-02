@@ -362,7 +362,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           const SizedBox(height: 7),
 
           const Text(
-            'Riwayat check-in event Anda yang berhasil akan muncul di sini.',
+            'Riwayat kehadiran kamu akan muncul di sini.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xFF64748B),

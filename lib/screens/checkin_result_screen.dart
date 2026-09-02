@@ -395,7 +395,7 @@ class CheckinResultScreen extends StatelessWidget {
           subtitle:
               'Kami tidak dapat terhubung ke server.',
           detail: result['message'] ??
-              'Silakan periksa koneksi Anda dan coba lagi.',
+              'Silakan periksa koneksi kamu dan coba lagi.',
         );
 
       default:

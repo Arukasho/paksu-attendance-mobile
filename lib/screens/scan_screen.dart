@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../core/api_client.dart';
@@ -275,19 +276,28 @@ class _ScanScreenState extends State<ScanScreen> {
               ),
             ),
 
-            _cameraButton(
-              icon: Icons.flash_on_outlined,
-              onPressed: () {
-                _controller.toggleTorch();
-              },
-            ),
+            if (!kIsWeb)
+              _cameraButton(
+                icon: Icons.flash_on_outlined,
+                onPressed: () {
+                  _controller.toggleTorch();
+                },
+              ),
 
-            const SizedBox(width: 8),
+            if (!kIsWeb) const SizedBox(width: 8),
 
             _cameraButton(
               icon: Icons.flip_camera_ios_outlined,
-              onPressed: () {
-                _controller.switchCamera();
+              onPressed: () async {
+                try {
+                  await _controller.switchCamera();
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Kamera depan tidak didukung oleh browser ini.')),
+                    );
+                  }
+                }
               },
             ),
           ],

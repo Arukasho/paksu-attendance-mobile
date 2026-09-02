@@ -220,8 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           content: const Text(
-            'Ini akan menandai Anda keluar dari setiap perangkat di mana '
-            'akun kamu saat ini masuk.',
+            'Ini akan mengeluarkan kamu dari semua perangkat yang kamu sign in.',
           ),
           actions: [
             TextButton(
@@ -414,7 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? null
                 : _pickAndUploadPhoto,
             child: const Text(
-              'Tap photo to change',
+              'Untuk mengubah foto profil, tap di sini.',
               style: TextStyle(
                 color: Color(0xFF2563EB),
                 fontSize: 12,
@@ -439,7 +438,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Profile Completion',
+                'Kelengkapan Profil',
                 style: TextStyle(
                   color: Color(0xFF0F172A),
                   fontSize: 14,
@@ -477,7 +476,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             percentage >= 100
                 ? 'Profil kamu sudah lengkap.'
-                : 'Lengkapi profil kamu untuk memberikan lebih banyak informasi.',
+                : 'Lengkapi profil kamu untuk melengkapi database PAKSU.',
             style: const TextStyle(
               color: Color(0xFF64748B),
               fontSize: 12,
@@ -491,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildAccountCard() {
     return _sectionCard(
-      title: 'Account Information',
+      title: 'Informasi Akun',
       icon: Icons.person_outline,
       children: [
         _infoRow(
@@ -506,7 +505,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         _infoRow(
           icon: Icons.phone_outlined,
-          label: 'Phone Number',
+          label: 'Nomor Telepon',
           value: _user!['phone'],
           isLast: true,
         ),
@@ -516,13 +515,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildActionsCard() {
     return _sectionCard(
-      title: 'Profile',
+      title: 'Profil',
       icon: Icons.manage_accounts_outlined,
       children: [
         _actionTile(
           icon: Icons.edit_outlined,
-          title: 'Complete / Edit Profile',
-          subtitle: 'Perbarui informasi akun kamu',
+          title: 'Lengkapi / Edit Profil',
+          subtitle: 'Perbarui dan lengkapi informasi akun kamu',
           onTap: _loggingOut ? null : _editProfile,
         ),
       ],
@@ -531,7 +530,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildPrivacyCard() {
     return _sectionCard(
-      title: 'Privacy & Security',
+      title: 'Privasi & Keamanan',
       icon: Icons.shield_outlined,
       children: [
         _actionTile(
