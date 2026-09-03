@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/datetime_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class CheckinResultScreen extends StatelessWidget {
+class CheckinResultScreen extends StatefulWidget {
   final Map<String, dynamic> result;
 
   const CheckinResultScreen({
@@ -10,7 +11,31 @@ class CheckinResultScreen extends StatelessWidget {
   });
 
   @override
+  State<CheckinResultScreen> createState() =>
+      _CheckinResultScreenState();
+}
+
+class _CheckinResultScreenState extends State<CheckinResultScreen> {
+  bool _formCompleted = false;
+
+  // Ganti dengan URL form Anda
+  final Uri _formUrl = Uri.parse(
+    'https://docs.google.com/forms/d/e/1FAIpQLSdaNIkOYTvyNW84dOGHU6UiG8X3tzfOlKAMO4TnJM3MTGcywQ/viewform?usp=header',
+  );
+
+  Future<void> _openForm() async {
+    if (!await launchUrl(
+      _formUrl,
+      mode: LaunchMode.externalApplication,
+    )) {
+      return;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final result = widget.result;
+
     final status =
         result['status'] as String? ?? 'error';
 
@@ -43,6 +68,10 @@ class CheckinResultScreen extends StatelessWidget {
                     config,
                     event,
                   ),
+
+                  const SizedBox(height: 20),
+
+                  _buildFormSection(),
 
                   const SizedBox(height: 20),
 
@@ -275,16 +304,92 @@ class CheckinResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBackButton(
-    BuildContext context,
-  ) {
+  Widget _buildFormSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFE2E8F0),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                color: Color(0xFF475569),
+                fontSize: 13,
+                height: 1.5,
+              ),
+              children: [
+                const TextSpan(
+                  text: 'Mohon waktunya untuk mengisi ',
+                ),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: GestureDetector(
+                    onTap: _openForm,
+                    child: const Text(
+                      'form',
+                      style: TextStyle(
+                        color: Color(0xFF2563EB),
+                        fontSize: 13,
+                        height: 1.5,
+                        fontWeight: FontWeight.w600,
+                        decoration:
+                            TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+                const TextSpan(
+                  text: ' berikut.',
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: _formCompleted,
+            onChanged: (value) {
+              setState(() {
+                _formCompleted = value ?? false;
+              });
+            },
+            controlAffinity:
+                ListTileControlAffinity.leading,
+            title: const Text(
+              'Saya sudah mengisi form.',
+              style: TextStyle(
+                color: Color(0xFF334155),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+    Widget _buildBackButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 46,
       child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+        onPressed: _formCompleted
+            ? () {
+                Navigator.of(context).pop();
+              }
+            : null,
         icon: const Icon(
           Icons.qr_code_scanner,
           size: 18,
@@ -293,13 +398,15 @@ class CheckinResultScreen extends StatelessWidget {
           'Back to Scanner',
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              const Color(0xFF2563EB),
+          backgroundColor: const Color(0xFF2563EB),
           foregroundColor: Colors.white,
+          disabledBackgroundColor:
+              const Color(0xFFE2E8F0),
+          disabledForegroundColor:
+              const Color(0xFF94A3B8),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(9),
+            borderRadius: BorderRadius.circular(9),
           ),
           textStyle: const TextStyle(
             fontSize: 14,
@@ -338,15 +445,14 @@ class CheckinResultScreen extends StatelessWidget {
 
       case 'too_early':
         final opensAt =
-            result['opens_at'] != null
-                ? formatWib(result['opens_at'])
+            widget.result['opens_at'] != null
+                ? formatWib(widget.result['opens_at'])
                 : '';
 
         return _ResultConfig(
           icon: Icons.schedule_outlined,
           color: const Color(0xFFD97706),
-          backgroundColor:
-              const Color(0xFFFFFBEB),
+          backgroundColor: const Color(0xFFFFFBEB),
           title: 'Check-in Belum Dibuka',
           subtitle:
               'Silakan tunggu hingga absensi dibuka.',
@@ -357,15 +463,14 @@ class CheckinResultScreen extends StatelessWidget {
 
       case 'too_late':
         final closedAt =
-            result['closed_at'] != null
-                ? formatWib(result['closed_at'])
+            widget.result['closed_at'] != null
+                ? formatWib(widget.result['closed_at'])
                 : '';
 
         return _ResultConfig(
           icon: Icons.event_busy_outlined,
           color: const Color(0xFFDC2626),
-          backgroundColor:
-              const Color(0xFFFEF2F2),
+          backgroundColor: const Color(0xFFFEF2F2),
           title: 'Check-in sudah ditutup.',
           subtitle:
               'Periode absensi untuk event ini telah berakhir.',
@@ -389,12 +494,11 @@ class CheckinResultScreen extends StatelessWidget {
         return _ResultConfig(
           icon: Icons.wifi_off_outlined,
           color: const Color(0xFF64748B),
-          backgroundColor:
-              const Color(0xFFF1F5F9),
+          backgroundColor: const Color(0xFFF1F5F9),
           title: 'Tidak ada koneksi internet',
           subtitle:
               'Kami tidak dapat terhubung ke server.',
-          detail: result['message'] ??
+          detail: widget.result['message'] ??
               'Silakan periksa koneksi kamu dan coba lagi.',
         );
 
@@ -407,7 +511,7 @@ class CheckinResultScreen extends StatelessWidget {
           title: 'Something Went Wrong',
           subtitle:
               'Kami tidak dapat menyelesaikan check-in Anda.',
-          detail: result['message'] ??
+          detail: widget.result['message'] ??
               'Silakan coba pindai kode QR lagi.',
         );
     }

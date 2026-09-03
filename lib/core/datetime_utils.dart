@@ -11,3 +11,12 @@ String formatWib(String isoString, {bool withTime = true}) {
   final mm = wib.minute.toString().padLeft(2, '0');
   return '$datePart, $hh:$mm WIB';
 }
+
+String formatIndo(String isoString) {
+  final date = DateTime.parse(isoString);
+
+  const monthsId = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+  return '${date.day} ${monthsId[date.month - 1]} ${date.year}';
+}

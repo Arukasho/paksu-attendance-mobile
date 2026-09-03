@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/api_client.dart';
+import '../core/datetime_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -21,9 +22,17 @@ class _EditProfileScreenState
   late final TextEditingController _addressController;
   late final TextEditingController _birthPlaceController;
   late final TextEditingController _birthDateController;
-
+  
+  DateTime? _birthDate;
   bool _saving = false;
   String? _errorMessage;
+  bool? _ktbHas;
+  bool? _wantJoinKtb;
+
+  final Set<String> _serveAs = {};
+  late final TextEditingController _serveAsOtherController;
+
+  String? _marriageStatus;
 
   @override
   void initState() {
@@ -49,10 +58,46 @@ class _EditProfileScreenState
       text: widget.user['birth_place'] ?? '',
     );
 
-    _birthDateController =
-        TextEditingController(
-      text: widget.user['birth_date'] ?? '',
+    _birthDate = DateTime.tryParse(widget.user['birth_date'] ?? '');
+    _birthDateController = TextEditingController(
+      text: _birthDate != null ? formatIndo(_birthDate!.toIso8601String()) : '',
     );
+
+    _ktbHas = widget.user['ktb_has'];
+    _wantJoinKtb = widget.user['want_join_ktb'];
+
+    final serveAs = widget.user['serve_as'];
+
+    if (serveAs is List) {
+      _serveAs.addAll(
+        serveAs.map((item) => item.toString().trim()),
+      );
+    } else if (serveAs is String && serveAs.isNotEmpty) {
+      final cleaned = serveAs
+          .replaceAll('{', '')
+          .replaceAll('}', '');
+
+      if (cleaned.isNotEmpty) {
+        _serveAs.addAll(
+          cleaned
+              .split(',')
+              .map(
+                (item) => item
+                    .trim()
+                    .replaceAll('"', ''),
+              ),
+        );
+      }
+    }
+
+    _serveAsOtherController =
+        TextEditingController(
+      text: widget.user['serve_as_other'] ?? '',
+    );
+
+    _marriageStatus =
+        widget.user['marriage_status'];
+
   }
 
   @override
@@ -62,6 +107,7 @@ class _EditProfileScreenState
     _addressController.dispose();
     _birthPlaceController.dispose();
     _birthDateController.dispose();
+    _serveAsOtherController.dispose();
     super.dispose();
   }
 
@@ -85,8 +131,23 @@ class _EditProfileScreenState
               _addressController.text.trim(),
           'birth_place':
               _birthPlaceController.text.trim(),
-          'birth_date':
-              _birthDateController.text.trim(),
+          'birth_date': _birthDate != null
+            ? '${_birthDate!.year.toString().padLeft(4, '0')}-'
+              '${_birthDate!.month.toString().padLeft(2, '0')}-'
+              '${_birthDate!.day.toString().padLeft(2, '0')}'
+            : null,
+          'ktb_has':
+              _ktbHas,
+          'want_join_ktb':
+              _wantJoinKtb,
+          'serve_as':
+              _serveAs.toList(),
+          'serve_as_other':
+              _serveAs.contains('Lainnya')
+                  ? _serveAsOtherController.text.trim()
+                  : null,
+          'marriage_status':
+              _marriageStatus,
         },
         auth: true,
       );
@@ -100,7 +161,7 @@ class _EditProfileScreenState
           _saving = false;
           _errorMessage =
               result['message'] ??
-                  'Gagal memperbarui profil Anda.';
+                  'Gagal memperbarui profil kamu.';
         });
       }
     } catch (e) {
@@ -109,7 +170,7 @@ class _EditProfileScreenState
       setState(() {
         _saving = false;
         _errorMessage =
-            'Gagal menyimpan profil Anda. Silakan coba lagi.';
+            'Gagal menyimpan profil kamu. Silakan coba lagi.';
       });
     }
   }
@@ -139,13 +200,9 @@ class _EditProfileScreenState
 
     if (picked == null || !mounted) return;
 
-    final formatted =
-        '${picked.year.toString().padLeft(4, '0')}-'
-        '${picked.month.toString().padLeft(2, '0')}-'
-        '${picked.day.toString().padLeft(2, '0')}';
-
     setState(() {
-      _birthDateController.text = formatted;
+      _birthDate = picked;
+      _birthDateController.text = formatIndo(picked.toIso8601String());
     });
   }
 
@@ -167,7 +224,7 @@ class _EditProfileScreenState
           ),
         ),
         title: const Text(
-          'Lengkapi Profil Kamu',
+          'Lengkapi Data Kamu',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 18,
@@ -240,7 +297,7 @@ class _EditProfileScreenState
         const SizedBox(height: 16),
 
         const Text(
-          'Lengkapi Profil Kamu',
+          'Lengkapi Data Kamu',
           style: TextStyle(
             color: Color(0xFF0F172A),
             fontSize: 23,
@@ -252,8 +309,8 @@ class _EditProfileScreenState
         const SizedBox(height: 6),
 
         const Text(
-          'Tambahkan informasi pribadi kamu untuk melengkapi'
-          'profil absensi.',
+          'Lengkapi data kamu untuk melengkapi'
+          ' database PAKSU.',
           style: TextStyle(
             color: Color(0xFF64748B),
             fontSize: 13,
@@ -288,7 +345,7 @@ class _EditProfileScreenState
             CrossAxisAlignment.start,
         children: [
           const Text(
-            'Informasi Pribadi',
+            'Form Data Diri',
             style: TextStyle(
               color: Color(0xFF0F172A),
               fontSize: 15,
@@ -299,7 +356,7 @@ class _EditProfileScreenState
           const SizedBox(height: 4),
 
           const Text(
-            'Silakan berikan informasi yang akurat.',
+            'Silakan isi form berikut.',
             style: TextStyle(
               color: Color(0xFF94A3B8),
               fontSize: 11,
@@ -310,8 +367,8 @@ class _EditProfileScreenState
 
           _buildTextField(
             controller: _universityController,
-            label: 'Universitas',
-            hint: 'Masukkan asal universitas Anda',
+            label: 'Asal Sekolah/Universitas',
+            hint: 'Masukkan asal universitas kamu',
             icon: Icons.school_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -321,8 +378,8 @@ class _EditProfileScreenState
 
           _buildTextField(
             controller: _stambukController,
-            label: 'Stambuk',
-            hint: 'Masukkan stambuk Anda',
+            label: 'Tahun Angkatan/Stambuk',
+            hint: 'Masukkan tahun angkatan kamu',
             icon: Icons.badge_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -332,8 +389,8 @@ class _EditProfileScreenState
 
           _buildTextField(
             controller: _addressController,
-            label: 'Alamat Domisili',
-            hint: 'Masukkan alamat domisili Anda',
+            label: 'Domisili Saat Ini (Contoh: Cawang, Jakarta Timur)',
+            hint: 'Masukkan alamat domisili kamu',
             icon: Icons.location_on_outlined,
             maxLines: 3,
             textInputAction:
@@ -345,7 +402,7 @@ class _EditProfileScreenState
           _buildTextField(
             controller: _birthPlaceController,
             label: 'Tempat Lahir',
-            hint: 'Masukkan tempat lahir Anda',
+            hint: 'Masukkan tempat lahir kamu',
             icon: Icons.location_city_outlined,
             textInputAction:
                 TextInputAction.next,
@@ -354,6 +411,22 @@ class _EditProfileScreenState
           const SizedBox(height: 14),
 
           _buildDateField(),
+
+          const SizedBox(height: 20),
+
+          _buildKtbHasField(),
+
+          const SizedBox(height: 20),
+
+          _buildWantJoinKtbField(),
+
+          const SizedBox(height: 20),
+
+          _buildServeAsField(),
+
+          const SizedBox(height: 20),
+
+          _buildMarriageStatusField(),
         ],
       ),
     );
@@ -473,7 +546,7 @@ class _EditProfileScreenState
             fontSize: 13,
           ),
           decoration: InputDecoration(
-            hintText: 'Pilih tanggal lahir Anda',
+            hintText: 'Pilih tanggal lahir kamu',
             hintStyle: const TextStyle(
               color: Color(0xFF94A3B8),
               fontSize: 13,
@@ -599,7 +672,7 @@ class _EditProfileScreenState
                 ),
               )
             : const Text(
-                'Save Profile',
+                'Simpan Data',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -608,4 +681,177 @@ class _EditProfileScreenState
       ),
     );
   }
+
+  Widget _buildKtbHasField() {
+    return _buildRadioGroup(
+      label: 'Apakah sudah memiliki KTB?',
+      options: const [
+        {'label': 'Ya', 'value': true},
+        {'label': 'Tidak', 'value': false},
+      ],
+      value: _ktbHas,
+      onChanged: (value) {
+        setState(() {
+          _ktbHas = value;
+        });
+      },
+    );
+  }
+
+  Widget _buildWantJoinKtbField() {
+    return _buildRadioGroup(
+      label:
+          'Apakah kamu ingin bergabung dengan KTB dan ingin dihubungi oleh Komisi KTB?',
+      options: const [
+        {'label': 'Ya', 'value': true},
+        {'label': 'Tidak', 'value': false},
+      ],
+      value: _wantJoinKtb,
+      onChanged: (value) {
+        setState(() {
+          _wantJoinKtb = value;
+        });
+      },
+    );
+  }
+
+    Widget _buildServeAsField() {
+    const options = [
+      'Singer',
+      'MC',
+      'Pemusik',
+      'Operator Slide',
+      'Penerima Tamu',
+      'Lainnya',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Jika Ya, kamu ingin melayani sebagai apa?',
+          style: TextStyle(
+            color: Color(0xFF334155),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
+        const SizedBox(height: 7),
+
+        ...options.map(
+          (option) {
+            return CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+              controlAffinity:
+                  ListTileControlAffinity.leading,
+              title: Text(
+                option,
+                style: const TextStyle(
+                  color: Color(0xFF334155),
+                  fontSize: 13,
+                ),
+              ),
+              value: _serveAs.contains(option),
+              onChanged: _saving
+                  ? null
+                  : (checked) {
+                      setState(() {
+                        if (checked == true) {
+                          _serveAs.add(option);
+                        } else {
+                          _serveAs.remove(option);
+
+                          if (option == 'Lainnya') {
+                            _serveAsOtherController.clear();
+                          }
+                        }
+                      });
+                    },
+            );
+          },
+        ),
+
+        if (_serveAs.contains('Lainnya')) ...[
+          const SizedBox(height: 4),
+
+          _buildTextField(
+            controller: _serveAsOtherController,
+            label: 'Lainnya',
+            hint: 'Tuliskan pelayanan lainnya',
+            icon: Icons.edit_outlined,
+            textInputAction:
+                TextInputAction.next,
+          ),
+        ],
+      ],
+    );
+  }
+
+    Widget _buildMarriageStatusField() {
+    return _buildRadioGroup(
+      label: 'Status',
+      options: const [
+        {'label': 'Single', 'value': 'single'},
+        {'label': 'Menikah', 'value': 'married'},
+      ],
+      value: _marriageStatus,
+      onChanged: (value) {
+        setState(() {
+          _marriageStatus = value;
+        });
+      },
+    );
+  }
+
+    Widget _buildRadioGroup<T>({
+    required String label,
+    required List<Map<String, dynamic>> options,
+    required T? value,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF334155),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
+        const SizedBox(height: 6),
+
+        ...options.map(
+          (option) {
+            final optionValue =
+                option['value'] as T;
+
+            return RadioListTile<T>(
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+              controlAffinity:
+                  ListTileControlAffinity.leading,
+              title: Text(
+                option['label'] as String,
+                style: const TextStyle(
+                  color: Color(0xFF334155),
+                  fontSize: 13,
+                ),
+              ),
+              value: optionValue,
+              groupValue: value,
+              onChanged: _saving
+                  ? null
+                  : onChanged,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
 }
