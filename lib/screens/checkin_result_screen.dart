@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/datetime_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../core/api_client.dart';
 
 class CheckinResultScreen extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -16,19 +16,162 @@ class CheckinResultScreen extends StatefulWidget {
 }
 
 class _CheckinResultScreenState extends State<CheckinResultScreen> {
-  bool _formCompleted = false;
 
-  // Ganti dengan URL form Anda
-  final Uri _formUrl = Uri.parse(
-    'https://docs.google.com/forms/d/e/1FAIpQLSdaNIkOYTvyNW84dOGHU6UiG8X3tzfOlKAMO4TnJM3MTGcywQ/viewform?usp=header',
-  );
+  bool _confirmedLatest = false;
+  bool _loadingProfile = true;
+  bool _saving = false;
+  String? _profileError;
+  bool? _ktbHas;
+  bool? _wantJoinKtb;
+  final Set<String> _serveAs = {};
+  late final TextEditingController _serveAsOtherController;
+  String? _marriageStatus;
 
-  Future<void> _openForm() async {
-    if (!await launchUrl(
-      _formUrl,
-      mode: LaunchMode.externalApplication,
-    )) {
-      return;
+  late final TextEditingController _universityController;
+  late final TextEditingController _stambukController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _birthPlaceController;
+  late final TextEditingController _birthDateController;
+  DateTime? _birthDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _universityController = TextEditingController();
+    _stambukController = TextEditingController();
+    _addressController = TextEditingController();
+    _birthPlaceController = TextEditingController();
+    _birthDateController = TextEditingController();
+    _serveAsOtherController = TextEditingController();
+    _fetchProfile();
+  }
+
+  @override
+  void dispose() {
+    _universityController.dispose();
+    _stambukController.dispose();
+    _addressController.dispose();
+    _birthPlaceController.dispose();
+    _birthDateController.dispose();
+    _serveAsOtherController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchProfile() async {
+    setState(() {
+      _loadingProfile = true;
+      _profileError = null;
+    });
+
+    try {
+      final result = await ApiClient.fetch('/users/me', auth: true);
+      final user = result['data'] as Map<String, dynamic>? ?? {};
+
+      _universityController.text = user['university'] ?? '';
+      _stambukController.text = user['stambuk'] ?? '';
+      _addressController.text = user['domicile_address'] ?? '';
+      _birthPlaceController.text = user['birth_place'] ?? '';
+      _birthDate = DateTime.tryParse(user['birth_date'] ?? '');
+      _birthDateController.text =
+          _birthDate != null ? formatIndo(_birthDate!.toIso8601String()) : '';
+
+      _ktbHas = user['ktb_has'];
+      _wantJoinKtb = user['want_join_ktb'];
+
+      _serveAs.clear();
+      final serveAs = user['serve_as'];
+      if (serveAs is List) {
+        _serveAs.addAll(serveAs.map((item) => item.toString().trim()));
+      } else if (serveAs is String && serveAs.isNotEmpty) {
+        final cleaned = serveAs.replaceAll('{', '').replaceAll('}', '');
+        if (cleaned.isNotEmpty) {
+          _serveAs.addAll(
+            cleaned.split(',').map((item) => item.trim().replaceAll('"', '')),
+          );
+        }
+      }
+      _serveAsOtherController.text = user['serve_as_other'] ?? '';
+
+      _marriageStatus = user['marriage_status'];
+
+      if (!mounted) return;
+      setState(() => _loadingProfile = false);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loadingProfile = false;
+        _profileError = 'Gagal memuat data profil kamu.';
+      });
+    }
+  }
+
+  Future<void> _pickBirthDate() async {
+    final now = DateTime.now();
+    final initialDate = _birthDate ?? DateTime(2000, 1, 1);
+    final safeInitialDate = initialDate.isAfter(now) ? now : initialDate;
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: safeInitialDate,
+      firstDate: DateTime(1950),
+      lastDate: now,
+      helpText: 'SELECT YOUR BIRTH DATE',
+    );
+
+    if (picked == null || !mounted) return;
+
+    setState(() {
+      _birthDate = picked;
+      _birthDateController.text = formatIndo(picked.toIso8601String());
+    });
+  }
+
+  Future<void> _confirmAndBack() async {
+    setState(() {
+      _saving = true;
+      _profileError = null;
+    });
+
+    try {
+      final result = await ApiClient.patch(
+        '/users/me',
+        {
+          'university': _universityController.text.trim(),
+          'stambuk': _stambukController.text.trim(),
+          'domicile_address': _addressController.text.trim(),
+          'birth_place': _birthPlaceController.text.trim(),
+          'birth_date': _birthDate != null
+              ? '${_birthDate!.year.toString().padLeft(4, '0')}-'
+                '${_birthDate!.month.toString().padLeft(2, '0')}-'
+                '${_birthDate!.day.toString().padLeft(2, '0')}'
+              : null,
+          'ktb_has': _ktbHas,
+          'want_join_ktb': _wantJoinKtb,
+          'serve_as': _serveAs.toList(),
+          'serve_as_other': _serveAs.contains('Lainnya')
+              ? _serveAsOtherController.text.trim()
+              : null,
+          'marriage_status': _marriageStatus,
+        },
+        auth: true,
+      );
+
+      if (!mounted) return;
+
+      if (result.containsKey('data')) {
+        Navigator.of(context).pop();
+      } else {
+        setState(() {
+          _saving = false;
+          _profileError = result['message'] ?? 'Gagal menyimpan data kamu.';
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _profileError = 'Gagal menyimpan data kamu. Silakan coba lagi.';
+      });
     }
   }
 
@@ -80,7 +223,7 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
                   const SizedBox(height: 12),
 
                   const Text(
-                    'Paksu Attendance App',
+                    '©2026 PAKSU Attendance App. All rights reserved.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFF94A3B8),
@@ -228,7 +371,7 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
                   CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'EVENT',
+                  'Event',
                   style: TextStyle(
                     color: Color(0xFF94A3B8),
                     fontSize: 10,
@@ -305,69 +448,93 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
   }
 
   Widget _buildFormSection() {
+    if (_loadingProfile) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(
-                color: Color(0xFF475569),
-                fontSize: 13,
-                height: 1.5,
-              ),
-              children: [
-                const TextSpan(
-                  text: 'Mohon waktunya untuk mengisi ',
-                ),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.baseline,
-                  baseline: TextBaseline.alphabetic,
-                  child: GestureDetector(
-                    onTap: _openForm,
-                    child: const Text(
-                      'form',
-                      style: TextStyle(
-                        color: Color(0xFF2563EB),
-                        fontSize: 13,
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                        decoration:
-                            TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
-                const TextSpan(
-                  text: ' berikut.',
-                ),
-              ],
+          const Text(
+            'Form Data Diri',
+            style: TextStyle(
+              color: Color(0xFF0F172A),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
             ),
           ),
+          const SizedBox(height: 4),
+          const Text(
+            'Sebelum lanjut, mohon isi data terbaru kamu di form berikut.',
+            style: TextStyle(color: Color(0xFF64748B), fontSize: 12, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+
+          _buildTextField(
+            controller: _universityController,
+            label: 'Asal Sekolah/Universitas',
+            icon: Icons.school_outlined,
+          ),
+          const SizedBox(height: 12),
+          _buildTextField(
+            controller: _stambukController,
+            label: 'Tahun Angkatan/Stambuk',
+            icon: Icons.badge_outlined,
+          ),
+          const SizedBox(height: 12),
+          _buildTextField(
+            controller: _addressController,
+            label: 'Domisili Saat Ini (Contoh: Cawang, Jakarta Timur)',
+            icon: Icons.location_on_outlined,
+            maxLines: 3,
+          ),
+          const SizedBox(height: 12),
+          _buildTextField(
+            controller: _birthPlaceController,
+            label: 'Tempat Lahir',
+            icon: Icons.location_city_outlined,
+          ),
+
+          const SizedBox(height: 12),
+          _buildDateField(),
+          const SizedBox(height: 20),
+          _buildKtbHasField(),
+          const SizedBox(height: 20),
+          _buildWantJoinKtbField(),
+          const SizedBox(height: 20),
+          _buildServeAsField(),
+          const SizedBox(height: 20),
+          _buildMarriageStatusField(),
+
+          if (_profileError != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _profileError!,
+              style: const TextStyle(color: Color(0xFFB91C1C), fontSize: 12),
+            ),
+          ],
 
           const SizedBox(height: 8),
-
           CheckboxListTile(
             contentPadding: EdgeInsets.zero,
-            value: _formCompleted,
-            onChanged: (value) {
-              setState(() {
-                _formCompleted = value ?? false;
-              });
-            },
-            controlAffinity:
-                ListTileControlAffinity.leading,
+            value: _confirmedLatest,
+            onChanged: _saving
+                ? null
+                : (value) => setState(() => _confirmedLatest = value ?? false),
+            controlAffinity: ListTileControlAffinity.leading,
             title: const Text(
-              'Saya sudah mengisi form.',
+              'Saya sudah memastikan data saya adalah yang terbaru.',
               style: TextStyle(
                 color: Color(0xFF334155),
                 fontSize: 13,
@@ -380,42 +547,228 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
     );
   }
 
-    Widget _buildBackButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 46,
-      child: ElevatedButton.icon(
-        onPressed: _formCompleted
-            ? () {
-                Navigator.of(context).pop();
-              }
-            : null,
-        icon: const Icon(
-          Icons.qr_code_scanner,
-          size: 18,
-        ),
-        label: const Text(
-          'Back to Scanner',
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2563EB),
-          foregroundColor: Colors.white,
-          disabledBackgroundColor:
-              const Color(0xFFE2E8F0),
-          disabledForegroundColor:
-              const Color(0xFF94A3B8),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(9),
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(
+          color: Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w600,
+        )),
+        const SizedBox(height: 7),
+        TextField(
+          controller: controller,
+          enabled: !_saving,
+          maxLines: maxLines,
+          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, size: 19, color: const Color(0xFF64748B)),
+            filled: true,
+            fillColor: const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(9),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            ),
           ),
-          textStyle: const TextStyle(
-            fontSize: 14,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Tanggal Lahir', style: TextStyle(
+          color: Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w600,
+        )),
+        const SizedBox(height: 7),
+        TextField(
+          controller: _birthDateController,
+          readOnly: true,
+          enabled: !_saving,
+          onTap: _pickBirthDate,
+          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 13),
+          decoration: InputDecoration(
+            hintText: 'Pilih tanggal lahir kamu',
+            prefixIcon: const Icon(Icons.calendar_today_outlined, size: 19, color: Color(0xFF64748B)),
+            suffixIcon: const Icon(Icons.keyboard_arrow_down, size: 20, color: Color(0xFF94A3B8)),
+            filled: true,
+            fillColor: const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(9),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKtbHasField() {
+    return _buildRadioGroup(
+      label: 'Apakah sudah memiliki KTB?',
+      options: const [
+        {'label': 'Ya', 'value': true},
+        {'label': 'Tidak', 'value': false},
+      ],
+      value: _ktbHas,
+      onChanged: (value) => setState(() => _ktbHas = value),
+    );
+  }
+
+  Widget _buildWantJoinKtbField() {
+    return _buildRadioGroup(
+      label:
+          'Apakah kamu ingin bergabung dengan KTB dan ingin dihubungi oleh Komisi KTB?',
+      options: const [
+        {'label': 'Ya', 'value': true},
+        {'label': 'Tidak', 'value': false},
+      ],
+      value: _wantJoinKtb,
+      onChanged: (value) => setState(() => _wantJoinKtb = value),
+    );
+  }
+
+  Widget _buildServeAsField() {
+    const options = [
+      'Singer',
+      'MC',
+      'Pemusik',
+      'Operator Slide',
+      'Penerima Tamu',
+      'Lainnya',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Jika Ya, kamu ingin melayani sebagai apa?',
+          style: TextStyle(
+            color: Color(0xFF334155),
+            fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
         ),
-      ),
+        const SizedBox(height: 7),
+        ...options.map((option) {
+          return CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text(option, style: const TextStyle(
+              color: Color(0xFF334155), fontSize: 13,
+            )),
+            value: _serveAs.contains(option),
+            onChanged: _saving
+                ? null
+                : (checked) {
+                    setState(() {
+                      if (checked == true) {
+                        _serveAs.add(option);
+                      } else {
+                        _serveAs.remove(option);
+                        if (option == 'Lainnya') {
+                          _serveAsOtherController.clear();
+                        }
+                      }
+                    });
+                  },
+          );
+        }),
+        if (_serveAs.contains('Lainnya')) ...[
+          const SizedBox(height: 4),
+          _buildTextField(
+            controller: _serveAsOtherController,
+            label: 'Lainnya',
+            icon: Icons.edit_outlined,
+          ),
+        ],
+      ],
     );
   }
+
+  Widget _buildMarriageStatusField() {
+    return _buildRadioGroup(
+      label: 'Status',
+      options: const [
+        {'label': 'Single', 'value': 'single'},
+        {'label': 'Menikah', 'value': 'married'},
+      ],
+      value: _marriageStatus,
+      onChanged: (value) => setState(() => _marriageStatus = value),
+    );
+  }
+
+  Widget _buildRadioGroup<T>({
+    required String label,
+    required List<Map<String, dynamic>> options,
+    required T? value,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(
+          color: Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w600,
+        )),
+        const SizedBox(height: 6),
+        ...options.map((option) {
+          final optionValue = option['value'] as T;
+          return RadioListTile<T>(
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text(option['label'] as String, style: const TextStyle(
+              color: Color(0xFF334155), fontSize: 13,
+            )),
+            value: optionValue,
+            groupValue: value,
+            onChanged: _saving ? null : onChanged,
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+  final canProceed = _confirmedLatest && !_loadingProfile && !_saving;
+
+  return SizedBox(
+    width: double.infinity,
+    height: 46,
+    child: ElevatedButton.icon(
+      onPressed: canProceed ? _confirmAndBack : null,
+      icon: _saving
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : const Icon(Icons.qr_code_scanner, size: 18),
+      label: const Text('Selesai Mengisi Form dan Kembali'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF2563EB),
+        foregroundColor: Colors.white,
+        disabledBackgroundColor: const Color(0xFFE2E8F0),
+        disabledForegroundColor: const Color(0xFF94A3B8),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+    ),
+  );
+}
 
   _ResultConfig _configFor(
     String status,
@@ -429,7 +782,7 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
               const Color(0xFFF0FDF4),
           title: 'Absen berhasil!',
           subtitle:
-              'Kamu sudah berhasil check in.',
+              'Kamu sudah berhasil check in. Selamat datang, Tuhan Yesus Memberkati!',
         );
 
       case 'already_checked_in':
