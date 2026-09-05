@@ -4,10 +4,12 @@ import '../core/api_client.dart';
 
 class CheckinResultScreen extends StatefulWidget {
   final Map<String, dynamic> result;
+  final bool forceShowForm;
 
   const CheckinResultScreen({
     super.key,
     required this.result,
+    this.forceShowForm = false,
   });
 
   @override
@@ -16,6 +18,9 @@ class CheckinResultScreen extends StatefulWidget {
 }
 
 class _CheckinResultScreenState extends State<CheckinResultScreen> {
+
+  bool get _isFirstCheckin =>
+    widget.result['already_fill_form'] != true || widget.forceShowForm;
 
   bool _confirmedLatest = false;
   bool _loadingProfile = true;
@@ -34,6 +39,19 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
   late final TextEditingController _birthDateController;
   DateTime? _birthDate;
 
+  String? _validateForm() {
+    if (_universityController.text.trim().isEmpty) return 'Asal Sekolah/Universitas wajib diisi.';
+    if (_stambukController.text.trim().isEmpty) return 'Tahun Angkatan/Stambuk wajib diisi.';
+    if (_addressController.text.trim().isEmpty) return 'Domisili wajib diisi.';
+    if (_birthPlaceController.text.trim().isEmpty) return 'Tempat Lahir wajib diisi.';
+    if (_birthDate == null) return 'Tanggal Lahir wajib diisi.';
+    if (_ktbHas == null) return 'Mohon pilih apakah kamu sudah memiliki KTB.';
+    if (_wantJoinKtb == null) return 'Mohon pilih apakah kamu ingin bergabung dengan KTB.';
+    if (_wantJoinKtb == true && _serveAs.isEmpty) return 'Mohon pilih minimal satu pelayanan.';
+    if (_marriageStatus == null) return 'Mohon pilih status pernikahan.';
+    return null; // all good
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +61,11 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
     _birthPlaceController = TextEditingController();
     _birthDateController = TextEditingController();
     _serveAsOtherController = TextEditingController();
-    _fetchProfile();
+    if (_isFirstCheckin) {
+      _fetchProfile();
+    } else {
+      _loadingProfile = false;
+    }
   }
 
   @override
@@ -127,6 +149,12 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
   }
 
   Future<void> _confirmAndBack() async {
+    final validationError = _validateForm();
+    if (validationError != null) {
+      setState(() => _profileError = validationError);
+      return;
+    }
+
     setState(() {
       _saving = true;
       _profileError = null;
@@ -159,6 +187,11 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
       if (!mounted) return;
 
       if (result.containsKey('data')) {
+        final eventId = widget.result['event']?['id'];
+        if (eventId != null) {
+          await ApiClient.post('/checkin/$eventId/already-fill-form', {}, auth: true);
+        }
+        if (!mounted) return;
         Navigator.of(context).pop();
       } else {
         setState(() {
@@ -214,7 +247,10 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
 
                   const SizedBox(height: 20),
 
-                  _buildFormSection(),
+                  if (_isFirstCheckin) ...[
+                    _buildFormSection(),
+                    const SizedBox(height: 20),
+                  ],
 
                   const SizedBox(height: 20),
 
@@ -739,36 +775,41 @@ class _CheckinResultScreenState extends State<CheckinResultScreen> {
   }
 
   Widget _buildBackButton(BuildContext context) {
-  final canProceed = _confirmedLatest && !_loadingProfile && !_saving;
+    final canProceed =
+        !_isFirstCheckin || (_confirmedLatest && !_loadingProfile && !_saving);
 
-  return SizedBox(
-    width: double.infinity,
-    height: 46,
-    child: ElevatedButton.icon(
-      onPressed: canProceed ? _confirmAndBack : null,
-      icon: _saving
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          : const Icon(Icons.qr_code_scanner, size: 18),
-      label: const Text('Selesai Mengisi Form dan Kembali'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: const Color(0xFFE2E8F0),
-        disabledForegroundColor: const Color(0xFF94A3B8),
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
-        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    return SizedBox(
+      width: double.infinity,
+      height: 46,
+      child: ElevatedButton.icon(
+        onPressed: canProceed
+            ? (_isFirstCheckin
+                ? _confirmAndBack
+                : () => Navigator.of(context).pop())
+            : null,
+        icon: _saving
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Icon(Icons.qr_code_scanner, size: 18),
+        label: const Text('Selesai'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF2563EB),
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color(0xFFE2E8F0),
+          disabledForegroundColor: const Color(0xFF94A3B8),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   _ResultConfig _configFor(
     String status,

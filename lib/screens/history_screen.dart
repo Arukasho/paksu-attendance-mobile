@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../core/api_client.dart';
 import '../core/datetime_utils.dart';
+import 'checkin_result_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  State<HistoryScreen> createState() =>
-      _HistoryScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
@@ -290,26 +290,54 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           const SizedBox(width: 8),
 
-          Container(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 9,
-              vertical: 5,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0FDF4),
-              borderRadius:
-                  BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Hadir',
-              style: TextStyle(
-                color: Color(0xFF15803D),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          item['already_fill_form'] == true
+              ? Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDF4),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Hadir',
+                    style: TextStyle(
+                      color: Color(0xFF15803D),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => CheckinResultScreen(
+                            result: {
+                              'status': 'already_checked_in',
+                              'event': {'id': item['event_id'], 'name': item['event_name']},
+                              'checked_in_at': item['checked_in_at'],
+                            },
+                            forceShowForm: true,
+                          ),
+                        ),
+                      );
+                      _load(); // refresh so the badge updates from amber to green after filling
+                    },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF7ED),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Belum isi Form',
+                      style: TextStyle(
+                        color: Color(0xFFB45309),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
