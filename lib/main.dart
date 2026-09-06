@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'screens/not_found_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +33,9 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SplashScreen(),
+      home: (kIsWeb && Uri.base.path != '/' && Uri.base.path.isNotEmpty)
+          ? const NotFoundScreen()
+          : const SplashScreen(),
     );
   }
 }
